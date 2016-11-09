@@ -22,14 +22,14 @@ if(file_exists('/app/d/lock')){
     $list_domains_done = (int)$last_line[0];
     $list_domains_total = (int)$last_line[1];
     $list_domains_left = (int)$list_domains_total - $list_domains_done;
-    $list_percentage = (int)($list_domains_done / $list_domains_total) * 100;
+    $list_percentage = ($list_domains_done / $list_domains_total) * 100;
 
     $last_line = explode('|', $last_line);
     $last_line = explode(':', $last_line[0]);
 }
 
 $array = array(
-    'v' => 2.2,
+    'v' => 2.3,
     'worker_name' => $worker_name,
     'list' => array(
         'id' => $list_id,

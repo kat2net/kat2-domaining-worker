@@ -80,7 +80,7 @@ function isAvailable($domain, $tld){
     $server = $finders[$tld][0];
     $finder = $finders[$tld][1];
 
-	$fp = @fsockopen($server, 43, $errno, $errstr, 10) or die("Socket Error " . $errno . " - " . $errstr);
+	$fp = @fsockopen($server, 43, $errno, $errstr, 10);
 	if($server == "whois.verisign-grs.com"){
         $domain = "domain ".$domain;
     }

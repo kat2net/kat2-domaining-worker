@@ -29,7 +29,7 @@ if(file_exists('/app/d/lock')){
 }
 
 $array = array(
-    'v' => 2.1,
+    'v' => 2.2,
     'worker_name' => $worker_name,
     'list' => array(
         'id' => $list_id,

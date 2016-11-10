@@ -2,43 +2,77 @@
 header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
 
-$worker_name = getenv('worker_name');
+$version = '0.0.1';
 
-$list_active = 'no';
-$list_id = '';
-$list_domains_done = '';
-$list_domains_total = '';
-$list_domains_left = '';
-$list_percentage = '';
+if(
+    (file_exists('/app/data/lock'))
+    &&
+    (file_exists('/app/data/list_id'))
+    &&
+    (file_exists('/app/data/domains_done'))
+    &&
+    (file_exists('/app/data/domains_left'))
+    &&
+    (file_exists('/app/data/domains_total'))
+){
+    $id = file_get_contents('/app/data/list_id');
+    $domains_done = file_get_contents('/app/data/domains_done');
+    $domains_left = file_get_contents('/app/data/domains_left');
+    $domains_total = file_get_contents('/app/data/domains_total');
 
-if(file_exists('/app/d/lock')){
-    $data = file('/app/d/output');
-    $last_line = $data[count($data)-2];
-    $last_line = explode('|', $last_line);
-    $last_line = explode(':', $last_line[0]);
+    $id = (int)$id;
+    $domains_done = (int)$domains_done;
+    $domains_left = (int)$domains_left;
+    $domains_total = (int)$domains_total;
 
-    $list_active = 'yes';
-    $list_id = (int)$last_line[2];
-    $list_domains_done = (int)$last_line[0];
-    $list_domains_total = (int)$last_line[1];
-    $list_domains_left = (int)$list_domains_total - $list_domains_done;
-    $list_percentage = ($list_domains_done / $list_domains_total) * 100;
-
-    $last_line = explode('|', $last_line);
-    $last_line = explode(':', $last_line[0]);
+    $info = array(
+            'v' => $version,
+            'name' => getenv('name'),
+            'list' => array(
+                'active' => true,
+                'id' => $id,
+                'domains_done' => $domains_done,
+                'domains_left' => $domains_left,
+                'domains_total' => $domains_total,
+                'percentage' => number_format(($domains_done / $domains_total) * 100, 4)
+            )
+        );
+}else if(
+    (file_exists('/app/data/lock'))
+    &&
+    (!file_exists('/app/data/list_id'))
+    &&
+    (!file_exists('/app/data/domains_done'))
+    &&
+    (!file_exists('/app/data/domains_left'))
+    &&
+    (!file_exists('/app/data/domains_total'))
+){
+    $info = array(
+        'v' => $version,
+        'name' => getenv('name'),
+        'list' => array(
+            'active' => true,
+            'id' => 0,
+            'domains_done' => 0,
+            'domains_left' => 0,
+            'domains_total' => 0,
+            'percentage' => 0
+        )
+    );
+}else{
+    $info = array(
+        'v' => $version,
+        'name' => getenv('name'),
+        'list' => array(
+            'active' => false,
+            'id' => 0,
+            'domains_done' => 0,
+            'domains_left' => 0,
+            'domains_total' => 0,
+            'percentage' => 0
+        )
+    );
 }
 
-$array = array(
-    'v' => 2.3,
-    'worker_name' => $worker_name,
-    'list' => array(
-        'id' => $list_id,
-        'active' => $list_active,
-        'domains_done' => $list_domains_done,
-        'domains_left' => $list_domains_left,
-        'domains_total' => $list_domains_total,
-        'percentage' => $list_percentage
-    )
-);
-
-echo json_encode($array, JSON_PRETTY_PRINT);
+echo json_encode($info, JSON_PRETTY_PRINT);

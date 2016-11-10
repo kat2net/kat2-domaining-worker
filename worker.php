@@ -5,29 +5,47 @@ $list = getList();
 if($list){
     $i = 1;
     $c = count($domains);
+
+    //domains_total
+    file_put_contents('/app/data/domains_total', $c);
+
     foreach($domains as $domain){
         $isAvailable = isAvailable($domain['domain'], $domain['tld']);
+        
         if($isAvailable){
-            echo $i.':'.$c.':'.$list.'|'.$domain['domain']."\n";
+            echo 'Y|'.$domain['domain']."\n";
             file_get_contents('http://intern.kat2.net/api/domaining/add-domain/?domain='.$domain['domain']);
+        }else{
+            echo 'N|'.$domain['domain']."\n";
         }
+
+        //domains_done
+        file_put_contents('/app/data/domains_done', $i);
+        
+        //domains_left
+        file_put_contents('/app/data/domains_left', $c - $i);
+
         $i++;
     }
 
     file_get_contents('http://intern.kat2.net/api/domaining/list-done/?id='.$list);
 
     //remove lock
-    unlink('/app/d/lock');
+    unlink('/app/data/lock');
 }else{
     echo 'no list found';
 }
 
 function getList(){
-    $data = file_get_contents('http://intern.kat2.net/api/domaining/get-list/?worker='.getenv('worker_name'));
+    $data = file_get_contents('http://intern.kat2.net/api/domaining/get-list/?worker='.getenv('name'));
     $array = json_decode($data, true);
 
     if($array['success'] == true){
         getDomains($array['url']);
+
+        //list_id
+        file_put_contents('/app/data/list_id', $array['id']);
+
         return $array['id'];
     }else{
         return false;
@@ -44,14 +62,12 @@ function getDomains($url){
     foreach($lines as $line){
         $length = strlen($line);
 
-        if(($length > 5) && ($length < 15)){
+        if(($length > 5) && ($length < 13)){
             if(strstr($line, '.')){
                 $tld = getTLD($line);
 
                 if(
-                    ($tld == 'com')
-                    ||
-                    ($tld == 'net')
+                    ($tld == 'org')
                 ){
                     $domains[] = array(
                         'domain' => $line,
@@ -79,6 +95,12 @@ function isAvailable($domain, $tld){
 
     $server = $finders[$tld][0];
     $finder = $finders[$tld][1];
+
+    if(
+        ($server == 'whois.publicinterestregistry.net')
+    ){
+        sleep(15);
+    }
 
 	$fp = @fsockopen($server, 43, $errno, $errstr, 10);
 	if($server == "whois.verisign-grs.com"){

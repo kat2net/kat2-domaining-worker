@@ -21,9 +21,6 @@ if($list){
 
         //domains_done
         file_put_contents('/app/data/domains_done', $i);
-        
-        //domains_left
-        file_put_contents('/app/data/domains_left', $c - $i);
 
         $i++;
     }
@@ -32,6 +29,10 @@ if($list){
 
     //remove lock
     unlink('/app/data/lock');
+    unlink('/app/data/list_id');
+    unlink('/app/data/domains_done');
+    unlink('/app/data/domains_total');
+    unlink('/app/data/output');
 }else{
     echo 'no list found';
 }

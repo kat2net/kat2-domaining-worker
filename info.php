@@ -11,19 +11,16 @@ if(
     &&
     (file_exists('/app/data/domains_done'))
     &&
-    (file_exists('/app/data/domains_left'))
-    &&
     (file_exists('/app/data/domains_total'))
 ){
     $id = file_get_contents('/app/data/list_id');
     $domains_done = file_get_contents('/app/data/domains_done');
-    $domains_left = file_get_contents('/app/data/domains_left');
     $domains_total = file_get_contents('/app/data/domains_total');
 
     $id = (int)$id;
     $domains_done = (int)$domains_done;
-    $domains_left = (int)$domains_left;
     $domains_total = (int)$domains_total;
+    $domains_left = (int)$domains_total - $domains_done;
 
     $info = array(
             'v' => $version,
@@ -44,8 +41,6 @@ if(
         (!file_exists('/app/data/list_id'))
         ||
         (!file_exists('/app/data/domains_done'))
-        ||
-        (!file_exists('/app/data/domains_left'))
         ||
         (!file_exists('/app/data/domains_total'))
     )

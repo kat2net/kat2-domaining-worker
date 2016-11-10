@@ -40,13 +40,15 @@ if(
 }else if(
     (file_exists('/app/data/lock'))
     &&
-    (!file_exists('/app/data/list_id'))
-    &&
-    (!file_exists('/app/data/domains_done'))
-    &&
-    (!file_exists('/app/data/domains_left'))
-    &&
-    (!file_exists('/app/data/domains_total'))
+    (
+        (!file_exists('/app/data/list_id'))
+        ||
+        (!file_exists('/app/data/domains_done'))
+        ||
+        (!file_exists('/app/data/domains_left'))
+        ||
+        (!file_exists('/app/data/domains_total'))
+    )
 ){
     $info = array(
         'v' => $version,

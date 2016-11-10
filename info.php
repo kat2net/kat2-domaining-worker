@@ -2,7 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 header('Content-Type: application/json');
 
-$version = '0.0.2';
+$version = '0.0.3';
 
 if(
     (file_exists('/app/data/lock'))

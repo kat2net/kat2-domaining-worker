@@ -67,7 +67,9 @@ function getDomains($url){
                 $tld = getTLD($line);
 
                 if(
-                    ($tld == 'org')
+                    ($tld == 'com')
+                    ||
+                    ($tld == 'net')
                 ){
                     $domains[] = array(
                         'domain' => $line,
